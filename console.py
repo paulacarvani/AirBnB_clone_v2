@@ -2,10 +2,9 @@
 """ Console Module """
 import cmd
 import sys
-import shlex
-from typing import Dict
 from models.base_model import BaseModel
 from models.__init__ import storage
+from models.engine.file_storage import FileStorage
 from models.user import User
 from models.place import Place
 from models.state import State
@@ -115,42 +114,33 @@ class HBNBCommand(cmd.Cmd):
         """ Overrides the emptyline method of CMD """
         pass
 
-    def function(self, args):
-        Dict = {}
-        for arg in args:
-            if '=' in arg:
-                token = arg.split('=', 1)
-                value = token[1]
-                if value[0] == value[-1] == '"':
-                    value = shlex.split(value)[0].replace('_', '')
-                else:
-                    try:
-                        value = int(token[1])
-                    except ValueError:
-                        try:
-                            value = float(token[1])
-                        except ValueError:
-                            continue
-                Dict[token[0]] = value
-        return Dict
-
-
-    def do_create(self, arg):
+    def do_create(self, args):
         """ Create an object of any class"""
-        args = arg.split()
-        if len (args) == 0:
+        if not args:
             print("** class name missing **")
-            return
-
-        elif args[0] not in HBNBCommand.classes:
-            DictNew = self.function(args[1:])
-            new_instance = HBNBCommand.classes[args[0]]()
-            new_instance.__dict__.update(DictNew)
-        else:
+        parameters = args.split(" ")
+        if parameters[0] not in HBNBCommand.classes:
             print("** class doesn't exist **")
+            print(parameters[0])
             return
-        print(new_instance.id)
+        new_instance = HBNBCommand.classes[parameters[0]]()
+        kwargs = {}
+        for param in parameters[1:]:
+            key, value =param.split("=")
+            if value[0] == '"':
+                value = value.strip('"').replace("_", " ")
+            setattr(new_instance, key, value)
+            try:
+                float(value)
+            except ValueError:
+                pass
+            try:
+                int(value)
+            except ValueError:
+                pass
+        new_instance.save()
         storage.save()
+        print(new_instance.id)
 
     def help_create(self):
         """ Help information for the create method """
