@@ -2,6 +2,7 @@
 """ Console Module """
 import cmd
 import sys
+import shlex
 from models.base_model import BaseModel
 from models.__init__ import storage
 from models.user import User
@@ -116,7 +117,7 @@ class HBNBCommand(cmd.Cmd):
     def function(self, args):
         Dict = {}
         for arg in args:
-            if '=' in arg: 
+            if '=' in arg:
                 token = arg.split('=', 1)
                 value = token[1]
                 if value[0] == value[-1] == '"':
@@ -128,26 +129,25 @@ class HBNBCommand(cmd.Cmd):
                         try:
                             value = float(token[1])
                         except ValueError:
-                            continue 
+                            continue
                 Dict[token[0]] = value
         return Dict
 
 
-    def do_create(self, args):
+    def do_create(self, arg):
         """ Create an object of any class"""
         args = arg.split()
-        if len (arg) == 0:
+        if len (args) == 0:
             print("** class name missing **")
             return
 
         elif args[0] not in HBNBCommand.classes:
-            DictNew = self.function(arg[1:])
+            DictNew = self.function(args[1:])
             new_instance = HBNBCommand.classes[args[0]]()
             new_instance.__dict__.update(DictNew)
         else:
             print("** class doesn't exist **")
             return
-
         print(new_instance.id)
         storage.save()
 
