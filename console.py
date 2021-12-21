@@ -112,27 +112,28 @@ class HBNBCommand(cmd.Cmd):
     def emptyline(self):
         """ Overrides the emptyline method of CMD """
         pass
-def function(self, args):
-    Dict = {}
-    for arg in args:
-        if '=' in arg: 
-            token = arg.split('=', 1)
-            value = token[1]
-            if value[0] == value[-1] == '"':
-                value = shlex.split(value)[0].replace('_', '')
-            else:
-                try:
-                    value = int(token[1])
-                except ValueError:
+
+    def function(self, args):
+        Dict = {}
+        for arg in args:
+            if '=' in arg: 
+                token = arg.split('=', 1)
+                value = token[1]
+                if value[0] == value[-1] == '"':
+                    value = shlex.split(value)[0].replace('_', '')
+                else:
                     try:
-                        value = float(token[1])
+                        value = int(token[1])
                     except ValueError:
-                        continue 
-            Dict[token[0]] = value
-    return Dict 
+                        try:
+                            value = float(token[1])
+                        except ValueError:
+                            continue 
+                Dict[token[0]] = value
+        return Dict
 
 
-def do_create(self, args):
+    def do_create(self, args):
         """ Create an object of any class"""
         args = arg.split()
         if len (arg) == 0:
@@ -145,8 +146,8 @@ def do_create(self, args):
             new_instance.__dict__.update(DictNew)
         else:
             print("** class doesn't exist **")
-            return       
-        
+            return
+
         print(new_instance.id)
         storage.save()
 
