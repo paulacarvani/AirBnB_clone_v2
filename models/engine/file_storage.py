@@ -10,13 +10,13 @@ class FileStorage:
 
     def all(self, cls=None):
         """Returns a dictionary of models currently in storage"""
-        if cls is None:
-            return FileStorage.__objects
-        dic = {}
-        for key, obj in self.__objects.items():
-            if obj._class == cls:
-                dic[key] = obj
-            return dic
+        if cls is not None:
+            cls_dict = {}
+            for key, value in FileStorage.__objects.items():
+                if value.__class__ == cls:
+                    cls_dict[key] = value
+            return cls_dict
+        return FileStorage.__objects
 
     def new(self, obj):
         """Adds new object to storage dictionary"""
@@ -35,10 +35,11 @@ class FileStorage:
         """public instance method delete"""
         if obj is None:
             return
-        obj = obj.__class__.name__ + '.' + obj.id
-        if obj in self.__objects:
-            del  self.__objects[obj]
-        self.save()
+        else:
+            key = obj.__class__.__name__ + '.' +obk.id
+            if key in self.__objects:
+                del FileStorage.__objects[key]
+                self.save()
 
     def reload(self):
         """Loads storage dictionary from file"""
