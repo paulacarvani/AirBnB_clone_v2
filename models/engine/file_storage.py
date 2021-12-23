@@ -9,14 +9,24 @@ class FileStorage:
     __objects = {}
 
     def all(self, cls=None):
-        """Returns a dictionary of models currently in storage"""
-        if cls is not None:
-            cls_dict = {}
-            for key, value in FileStorage.__objects.items():
-                if value.__class__ == cls:
-                    cls_dict[key] = value
-            return cls_dict
-        return FileStorage.__objects
+        """returns a dictionary
+        Return:
+            returns a dictionary of __object
+        """
+        if cls is None:
+            return self.__objects
+        else:
+            # print("CLASE: {}".format(cls))
+            my_dict = {}
+            # print("OBJECTS: {}".format(self.__objects))
+            for key in self.__objects:
+                name = key.split('.')
+                # print("NAME: {}".format(name))
+                # print("CLSNAME: {}".format(cls.__name__))
+                if name[0] == cls.__name__:
+                    my_dict[key] = self.__objects[key]
+            # print("MY_DICT: {}".format(my_dict))
+            return my_dict
 
     def new(self, obj):
         """Adds new object to storage dictionary"""
@@ -30,16 +40,6 @@ class FileStorage:
             for key, val in temp.items():
                 temp[key] = val.to_dict()
             json.dump(temp, f)
-
-    def delete(self, obj=None):
-        """public instance method delete"""
-        if obj is None:
-            return
-        else:
-            key = obj.__class__.__name__ + '.' + obj.id
-            if key in self.__objects:
-                del FileStorage.__objects[key]
-                self.save()
 
     def reload(self):
         """Loads storage dictionary from file"""
@@ -61,6 +61,12 @@ class FileStorage:
             with open(FileStorage.__file_path, 'r') as f:
                 temp = json.load(f)
                 for key, val in temp.items():
-                        self.all()[key] = classes[val['__class__']](**val)
+                    self.all()[key] = classes[val['__class__']](**val)
         except FileNotFoundError:
             pass
+
+    def delete(self, obj=None):
+        """ delete obj from __objects """
+        if obj:
+            del self.__objects[obj.__class__.__name__ + '.' + obj.id]
+            self.save()
