@@ -8,6 +8,7 @@ import models
 
 
 class Amenity(BaseModel, Base):
+    """ implementation for the amenities """
     if models.type_storage == "db":
         __tablename__ = "amenities"
         name = Column(String(128), nullable=False)
