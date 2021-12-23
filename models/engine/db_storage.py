@@ -13,7 +13,7 @@ from models.amenity import Amenity
 
 
 class DBStorage:
-    """New engine DBStorage"""
+    """ DBStorage class"""
     __engine = None
     __session = None
 
