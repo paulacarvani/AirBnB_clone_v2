@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-"""This module defines a class to manage database storage for hbnb clone"""
+
 from os import getenv
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, scoped_session
@@ -13,7 +13,7 @@ from models.amenity import Amenity
 
 
 class DBStorage:
-    """ DBStorage class"""
+    """New engine DBStorage"""
     __engine = None
     __session = None
 
@@ -65,8 +65,6 @@ class DBStorage:
         Base.metadata.create_all(self.__engine)
         Session = sessionmaker()
         Session.configure(bind=self.__engine)
-        # Session = sessionmaker(bind=self.__engine, expire_on_commit=False)
-        # Session = scoped_session(Session)
         self.__session = Session()
 
     def close(self):

@@ -15,10 +15,7 @@ class BaseModel:
     updated_at = Column(DateTime, nullable=False, default=datetime.utcnow())
 
     def __init__(self, *args, **kwargs):
-        """Instatntiates a new model
-        args(tupla): arguments
-        kwargs (dict): key word arguments
-        """
+        """Instatntiates a new model"""
         if not kwargs:
             from models import storage
             self.id = str(uuid.uuid4())

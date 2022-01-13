@@ -16,16 +16,11 @@ class FileStorage:
         if cls is None:
             return self.__objects
         else:
-            # print("CLASE: {}".format(cls))
             my_dict = {}
-            # print("OBJECTS: {}".format(self.__objects))
             for key in self.__objects:
                 name = key.split('.')
-                # print("NAME: {}".format(name))
-                # print("CLSNAME: {}".format(cls.__name__))
                 if name[0] == cls.__name__:
                     my_dict[key] = self.__objects[key]
-            # print("MY_DICT: {}".format(my_dict))
             return my_dict
 
     def new(self, obj):
@@ -45,9 +40,9 @@ class FileStorage:
         """Loads storage dictionary from file"""
         from models.base_model import BaseModel
         from models.user import User
-        from models.place import Place
         from models.state import State
         from models.city import City
+        from models.place import Place
         from models.amenity import Amenity
         from models.review import Review
 

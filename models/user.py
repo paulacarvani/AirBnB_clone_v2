@@ -1,6 +1,5 @@
 #!/usr/bin/python3
 """This module defines a class User"""
-
 from os import getenv
 from sqlalchemy.sql.schema import Column
 from sqlalchemy.sql.sqltypes import String
