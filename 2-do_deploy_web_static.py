@@ -1,31 +1,35 @@
 #!/usr/bin/python3
-"""Module that deploys the contents of web_static to the server"""
-from fabric.api import local, hosts, put, run, env
+
+"""
+Files deployment
+"""
+from fabric.api import env, put, run
+from os.path import exists
 
 env.hosts = ['35.237.0.179', '54.167.64.127']
+env.user = "ubuntu"
 
 
 def do_deploy(archive_path):
-    """Distributes an archive to the web servers"""
-    from os import path
-
-    if not path.exists(archive_path):
+    """ Deploy files """
+    if exists(archive_path) is False:
         return False
-
-    filename = archive_path.split('/')[1]
-    dest_path = "/data/web_static/releases/{}/".format(filename.split('.')[0])
-
     try:
-        print("Executing task 'do_deploy'")
-        put(archive_path, "/tmp/")
-        run('mkdir -p {}'.format(dest_path))
-        run('tar -xzf /tmp/{} -C {}'.format(filename, dest_path))
-        run('rm /tmp/{}'.format(filename))
-        run('mv {}web_static/* {}'.format(dest_path, dest_path))
-        run('rm -rf {}web_static'.format(dest_path))
-        run('rm -rf /data/web_static/current')
-        run('ln -s {} /data/web_static/current'.format(dest_path))
-        print("New version deployed!")
+        filename = archive_path.split('/')[1]
+        no_ext = archive_path.split('/')[1].split('.')[0]
+        final_path = "/data/web_static/releases/"
+
+        put('{}, /tmp/'.format(archive_path))
+        run('sudo mkdir -p {}{}/'.format(final_path, no_ext))
+        run('sudo tar -xzf /tmp/{} -C {}{}/'.format(
+            filename, final_path, no_ext))
+        run('sudo rm /tmp/{}'.format(filename))
+        run('sudo mv {0}{1}/web_static/* {0}{1}/'.format(
+            final_path, no_ext))
+        run('sudo rm -rf {}{}/web_static'.format(final_path, no_ext))
+        run('sudo rm -rf /data/web_static/current')
+        run('sudo ln -s {}{}/ /data/web_static/current'.format(
+            final_path, no_ext))
         return True
     except Exception:
         return False
