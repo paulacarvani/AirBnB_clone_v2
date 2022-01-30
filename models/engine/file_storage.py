@@ -9,19 +9,16 @@ class FileStorage:
     __objects = {}
 
     def all(self, cls=None):
-        """returns a dictionary
-        Return:
-            returns a dictionary of __object
-        """
+        """Returns a dictionary of models currently in storage"""
         if cls is None:
-            return self.__objects
+            return FileStorage.__objects
         else:
-            my_dict = {}
-            for key in self.__objects:
-                name = key.split('.')
-                if name[0] == cls.__name__:
-                    my_dict[key] = self.__objects[key]
-            return my_dict
+            c_dict = {}
+            for k, v in self.__objects.items():
+                name = k.split('.')
+                if name[0] in str(cls):
+                    c_dict[k] = v
+            return c_dict
 
     def new(self, obj):
         """Adds new object to storage dictionary"""
@@ -40,9 +37,9 @@ class FileStorage:
         """Loads storage dictionary from file"""
         from models.base_model import BaseModel
         from models.user import User
+        from models.place import Place
         from models.state import State
         from models.city import City
-        from models.place import Place
         from models.amenity import Amenity
         from models.review import Review
 
@@ -61,11 +58,12 @@ class FileStorage:
             pass
 
     def delete(self, obj=None):
-        """ delete obj from __objects """
-        if obj:
-            del self.__objects[obj.__class__.__name__ + '.' + obj.id]
-            self.save()
+        """Delete obj from __objects if it’s inside"""
+        FileStorage.__objects = {key: val for key, val
+                                 in FileStorage.__objects.items()
+                                 if val != obj}
+        self.save()
 
     def close(self):
-        """Close Conection"""
+        """Closes connection"""
         self.reload()
