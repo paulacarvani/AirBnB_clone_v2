@@ -65,3 +65,7 @@ class FileStorage:
         if obj:
             del self.__objects[obj.__class__.__name__ + '.' + obj.id]
             self.save()
+
+    def close(self):
+        """Close Conection"""
+        self.reload()
